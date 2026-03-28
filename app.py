@@ -5,8 +5,11 @@ import pickle
 import re
 import string
 import os
-
 import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+
 nltk.data.path.append("./nltk_data")
 
 try:
