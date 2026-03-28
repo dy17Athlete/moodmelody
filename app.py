@@ -3,6 +3,8 @@ import streamlit.components.v1 as components
 import numpy as np
 import pickle
 import re
+import tensorflow as tf
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 import string
 import os
 import nltk
