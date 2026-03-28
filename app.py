@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import numpy as np
 import pickle
 import re
@@ -11,86 +10,94 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
+# --- NLTK SETUP ---
+# This ensures NLTK works on the cloud without crashing the installer
+@st.cache_resource
+def download_nltk_data():
+    try:
+        nltk.download('stopwords')
+        nltk.download('wordnet')
+        nltk.download('omw-1.4')
+    except Exception as e:
+        st.error(f"Error downloading NLTK data: {e}")
 
-nltk.data.path.append("./nltk_data")
-
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
-
-nltk.data.path.append("./nltk_data")
-try:
-    nltk.data.find('corpora/stopwords.zip')
-except LookupError:
-    nltk.download('stopwords', download_dir='./nltk_data')
-try:
-    nltk.data.find('corpora/wordnet.zip')
-except LookupError:
-    nltk.download('wordnet', download_dir='./nltk_data')
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+download_nltk_data()
 
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
 
+# --- CONFIGURATION ---
 emotion_to_track_id = {
-    'anger'   : '7iN1s7xHE4ifF5povM6A48',
-    'fear'    : '3KkXRkHbMCARz0aVfEt68P',
-    'joy'     : '7qiZfU4dY1lWllzX7mPBI3',
-    'love'    : '3d9DChrdc6BOeFsbrZ3Is0',
-    'sadness' : '008McaJl3WM1UqxxVie9BP',
+    'anger': '7iN1s7xHE4ifF5povM6A48',
+    'fear': '3KkXRkHbMCARz0aVfEt68P',
+    'joy': '7qiZfU4dY1lWllzX7mPBI3',
+    'love': '3d9DChrdc6BOeFsbrZ3Is0',
+    'sadness': '008McaJl3WM1UqxxVie9BP',
     'surprise': '10nyNJ6zNy2YVYLrcwLccB',
 }
 
+# --- HELPER FUNCTIONS ---
 @st.cache_resource
 def load_assets():
-    m = tf.keras.models.load_model('./saved_models/Emotion Recognition from text.h5')
-    with open('./saved_models/tokenizer.pkl',     'rb') as f: tok = pickle.load(f)
-    with open('./saved_models/label_encoder.pkl', 'rb') as f: le  = pickle.load(f)
-    with open('./saved_models/maxlen.pkl',        'rb') as f: mx  = pickle.load(f)
-    return m, tok, le, mx
+    # Ensure these paths match your GitHub folder structure exactly (Case Sensitive!)
+    model_path = './saved_models/Emotion Recognition from text.h5'
+    tok_path = './saved_models/tokenizer.pkl'
+    le_path = './saved_models/label_encoder.pkl'
+    max_path = './saved_models/maxlen.pkl'
+    
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found at {model_path}")
 
-def normalized_sentence(sentence):
-    sentence = sentence.lower()
-    sentence = " ".join(w for w in sentence.split() if w not in stop_words)
-    sentence = ''.join(c for c in sentence if not c.isdigit())
-    sentence = re.sub(f'[{re.escape(string.punctuation)}]', ' ', sentence)
-    sentence = re.sub(r'\s+', ' ', sentence).strip()
-    sentence = re.sub(r'https?://\S+|www\.\S+', '', sentence)
-    sentence = " ".join(lemmatizer.lemmatize(w) for w in sentence.split())
-    return sentence
+    model = tf.keras.models.load_model(model_path)
+    with open(tok_path, 'rb') as f: tok = pickle.load(f)
+    with open(le_path, 'rb') as f: le = pickle.load(f)
+    with open(max_path, 'rb') as f: mx = pickle.load(f)
+    return model, tok, le, mx
 
-def predict_emotion(text, model, tokenizer, le, maxlen):
-    text = normalized_sentence(text)
-    seq  = tokenizer.texts_to_sequences([text])
-    seq  = pad_sequences(seq, maxlen=maxlen, truncating='pre')
-    pred = model.predict(seq)
-    return le.inverse_transform([np.argmax(pred, axis=1)[0]])[0]
+def clean_text(text):
+    text = text.lower()
+    text = " ".join(w for w in text.split() if w not in stop_words)
+    text = ''.join(c for c in text if not c.isdigit())
+    text = re.sub(f'[{re.escape(string.punctuation)}]', ' ', text)
+    text = re.sub(r'https?://\S+|www\.\S+', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    text = " ".join(lemmatizer.lemmatize(w) for w in text.split())
+    return text
 
-def show_embed(emotion):
-    track_id = emotion_to_track_id.get(emotion)
-    embed_url = f"https://open.spotify.com/embed/track/{track_id}?utm_source=generator&theme=0"
-    components.iframe(embed_url, height=152)
-
+# --- MAIN APP ---
 def main():
-    st.title("MoodMelody: Emotion-based Music Recommender")
+    st.set_page_config(page_title="MoodMelody", page_icon="🎵")
+    st.title("🎵 MoodMelody")
+    st.subheader("Emotion-based Music Recommender")
 
     try:
         model, tokenizer, le, maxlen = load_assets()
     except Exception as e:
-        st.error(f"Could not load model: {e}")
+        st.error(f"System Error: {e}")
+        st.info("Please check if the 'saved_models' folder exists in your GitHub repo.")
         return
 
-    text = st.text_input("Enter how you are feeling:")
+    user_input = st.text_input("How are you feeling right now?")
 
-    if st.button("Detect Emotion and Play Song"):
-        if not text.strip():
-            st.warning("Please enter some text.")
-            return
-        emotion = predict_emotion(text, model, tokenizer, le, maxlen)
-        st.write(f"Detected emotion: **{emotion}**")
-        show_embed(emotion)
+    if st.button("Analyze & Recommend"):
+        if user_input.strip():
+            # Prediction logic
+            cleaned = clean_text(user_input)
+            seq = tokenizer.texts_to_sequences([cleaned])
+            padded = pad_sequences(seq, maxlen=maxlen, truncating='pre')
+            
+            prediction = model.predict(padded)
+            emotion = le.inverse_transform([np.argmax(prediction, axis=1)[0]])[0]
+            
+            st.success(f"Detected Emotion: **{emotion.upper()}**")
+            
+            # Spotify Embed
+            track_id = emotion_to_track_id.get(emotion.lower())
+            if track_id:
+                embed_url = f"https://open.spotify.com/embed/track/{track_id}?utm_source=generator"
+                st.components.v1.iframe(embed_url, height=152)
+        else:
+            st.warning("Please type something first!")
 
 if __name__ == "__main__":
     main()
