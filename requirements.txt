@@ -6,4 +6,4 @@ scikit-learn
 python-dotenv
 requests
 nltk
-tensorflow
+tensorflow-cpu
