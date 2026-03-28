@@ -1,9 +1,5 @@
 streamlit
-spotipy
-pandas
-numpy
+numpy==1.26.4
+tensorflow-cpu==2.15.0
 scikit-learn
-python-dotenv
-requests
 nltk
-tensorflow-cpu
