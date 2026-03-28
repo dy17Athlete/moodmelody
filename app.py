@@ -2,7 +2,6 @@ import streamlit as st
 import streamlit.components.v1 as components
 import numpy as np
 import pickle
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
 import string
 import os
