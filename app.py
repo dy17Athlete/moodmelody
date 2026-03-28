@@ -86,9 +86,11 @@ def main():
             seq = tokenizer.texts_to_sequences([cleaned])
             padded = pad_sequences(seq, maxlen=maxlen, truncating='pre')
             
-            prediction = model.predict(padded)
-            emotion = le.inverse_transform([np.argmax(prediction, axis=1)[0]])[0]
-            
+           # Replace your current emotion = le.inverse_transform... line with this:
+            labels = ['anger', 'fear', 'joy', 'love', 'sadness', 'surprise'] 
+# Ensure the order above matches the order of your training dataset classes!
+            predicted_index = np.argmax(prediction, axis=1)[0]
+            emotion = labels[predicted_index]
             st.success(f"Detected Emotion: **{emotion.upper()}**")
             
             # Spotify Embed
