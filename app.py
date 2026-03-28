@@ -31,7 +31,7 @@ emotion_to_track_id = {
     'anger': '7iN1s7xHE4ifF5povM6A48',
     'fear': '3KkXRkHbMCARz0aVfEt68P',
     'joy': '7qiZfU4dY1lWllzX7mPBI3',
-    'love': '3d9DChrdc6BOeFsbrZ3Is0',
+    'love': '<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/2Fv2injs4qAm8mJBGaxVKU?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>',
     'sadness': '008McaJl3WM1UqxxVie9BP',
     'surprise': '10nyNJ6zNy2YVYLrcwLccB',
 }
