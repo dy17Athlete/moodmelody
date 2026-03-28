@@ -2,12 +2,10 @@ import streamlit as st
 import streamlit.components.v1 as components
 import numpy as np
 import pickle
-import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
 import string
 import os
-import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
