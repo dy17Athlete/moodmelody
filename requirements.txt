@@ -5,5 +5,4 @@ numpy
 scikit-learn
 python-dotenv
 requests
-tensorflow-cpu
 nltk
