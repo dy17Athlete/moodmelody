@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import streamlit as st
 import torch
+import numpy as np
 
 # Ensure the necessary NLTK data is downloaded
 nltk.data.path.append('./nltk_data')
