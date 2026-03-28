@@ -119,9 +119,9 @@ if __name__ == "__main__":
 # stop_words = set(stopwords.words("english"))
 # lemmatizer = WordNetLemmatizer()
 
-# CLIENT_ID     = 'dc88dca2f2e549bbbdef653f12ddb042'
-# CLIENT_SECRET = '00e8ea8136994ceaada7b3833c88edcf'
-# REDIRECT_URI  = 'https://moodmelody-6zfdngomcsns4f6rhmwx6b.streamlit.app'
+# CLIENT_ID     = '9b6c8a4460e347cc8ceff83092c793ab'
+# CLIENT_SECRET = '0eaeb2252c4947cc973ba6bd6919861e'
+# REDIRECT_URI  = 'https://moodmelody-hna0vvmy1fl.streamlit.app'
 
 # SCOPE = "user-modify-playback-state user-read-playback-state"
 
