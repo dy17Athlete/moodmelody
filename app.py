@@ -92,7 +92,7 @@ def main():
 
 # Standard Emotion Dataset Order (Try this first)
 # If 'love' still shows 'anger', swap their positions in this list!
-            emotions_list = ['anger', 'fear', 'joy', 'love', 'sadness', 'surprise']
+            emotions_list = ['love', 'fear', 'joy', 'anger', 'sadness', 'surprise']
 
             emotion = emotions_list[predicted_index]
             st.success(f"Detected Emotion: **{emotion.upper()}**")
