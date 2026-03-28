@@ -25,7 +25,6 @@ except LookupError:
     nltk.download('wordnet', download_dir='./nltk_data')
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-tf.get_logger().setLevel('ERROR')
 
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
