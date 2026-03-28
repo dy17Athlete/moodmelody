@@ -6,6 +6,14 @@ import re
 import string
 import os
 
+import nltk
+nltk.data.path.append("./nltk_data")
+
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords')
+
 nltk.data.path.append("./nltk_data")
 try:
     nltk.data.find('corpora/stopwords.zip')
